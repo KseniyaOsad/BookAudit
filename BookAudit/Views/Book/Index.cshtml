@@ -1,0 +1,100 @@
+﻿@model BookAudit.ViewModels.IndexHomeModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<h2 class="text-center">Каталог книг</h2>
+
+<form method="get">
+    <div class=" form-group">
+        <label class="control-label">Поиск книги по названию: </label>
+        <input name="name" class="form-control" value="@Model.TextInFieldName" />
+    </div>
+    <div class=" form-group">
+        <label class="control-label">Поиск по авторам: </label>
+        <select name="authorId" asp-items="Model.Authors" class="form-control"></select>
+    </div>
+    <label class="control-label">Дополнительно: </label>
+    <div class=" form-group">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="reservation" id="reservation3" value="-1">
+            <label class="form-check-label" for="reservation3">Все</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="reservation" id="reservation2" value="0">
+            <label class="form-check-label" for="reservation2">Открыты для резерва</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="reservation" id="reservation1" value="1">
+            <label class="form-check-label" for="reservation1">Зарезервированные</label>
+        </div>
+    </div>
+    <div class=" form-group">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inArchieve" id="inArchieve3" value="-1">
+            <label class="form-check-label" for="inArchieve3">Все</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inArchieve" id="inArchieve2" value="0">
+            <label class="form-check-label" for="inArchieve2">Доступные</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inArchieve" id="inArchieve1" value="1">
+            <label class="form-check-label" for="inArchieve1">В архиве</label>
+        </div>
+    </div>
+    <br>
+    <input type="submit" value="Поиск" class="m-auto btn btn-default d-block" />
+    <a class="m-auto btn btn-default d-block" asp-action="Index">Сбросить</a>
+
+</form>
+<table class="mt-3 table">
+    <thead>
+        <tr>
+            <th>
+                Название Книги
+            </th>
+            <th>
+                Автор
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Books)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author.Name)
+                </td>
+                <td>
+
+                    @if (item.Reserve)
+                    {
+                        <a class="btn btn-dark" asp-action="BookReservation" asp-route-bookId="@item.Id" asp-route-isReserved="true" asp-route-actionName="Index">В резерве</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-secondary" asp-action="BookReservation" asp-route-bookId="@item.Id" asp-route-isReserved="false" asp-route-actionName="Index">Зарезервировать</a>
+                    }
+                    <br>
+                    @if (item.InArchive)
+                    {
+                        <a class="btn btn-dark" asp-action="BookArchievation" asp-route-bookId="@item.Id" asp-route-isArchieved="true" asp-route-actionName="Index">В архиве</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-secondary" asp-action="BookArchievation" asp-route-bookId="@item.Id" asp-route-isArchieved="false" asp-route-actionName="Index">Архивировать</a>
+                    }
+                    <br>
+
+                    <a class="btn btn-default" asp-action="Details" asp-route-id="@item.Id">Узнать детальнее</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

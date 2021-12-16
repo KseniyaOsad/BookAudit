@@ -1,0 +1,57 @@
+﻿@model BookAudit.Models.Book
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<h1>@Html.DisplayFor(model => model.Name)</h1>
+
+<div>
+    <h4>
+        @Html.DisplayFor(model => model.Author.Name)
+    </h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Название
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            Описание
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            Автор
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Author.Name)
+        </dd>
+    </dl>
+</div>
+<div>
+    @if (Model.Reserve)
+    {
+        <a class="btn btn-dark" asp-action="BookReservation" asp-route-bookId="@Model.Id" asp-route-isReserved="true" asp-route-actionName="Details">В резерве</a>
+    }
+    else
+    {
+        <a class="btn btn-secondary" asp-action="BookReservation" asp-route-bookId="@Model.Id" asp-route-isReserved="false" asp-route-actionName="Details">Зарезервировать</a>
+    }
+    <br>
+    @if (Model.InArchive)
+    {
+        <a class="btn btn-dark" asp-action="BookArchievation" asp-route-bookId="@Model.Id" asp-route-isArchieved="true" asp-route-actionName="Details">В архиве</a>
+    }
+    else
+    {
+        <a class="btn btn-secondary" asp-action="BookArchievation" asp-route-bookId="@Model.Id" asp-route-isArchieved="false" asp-route-actionName="Details">Архивировать</a>
+    }
+    <br>
+    <br>
+    <a asp-action="Index">На главную</a>
+</div>
