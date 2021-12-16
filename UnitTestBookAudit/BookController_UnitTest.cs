@@ -178,5 +178,58 @@ namespace UnitTestBookAudit
             }
         }
 
+        [TestMethod]
+        [DataRow(24324)]
+        [DataRow(3333)]
+        [DataRow(1000)]
+        public void Get_BookById_CathExeptionNotFound(int? id)
+        {
+            try
+            {
+                hm.GetBookById(id);
+                Assert.Fail("No exeption");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(e.Message, "Book doesn't found");
+            }
+        }
+
+
+        [TestMethod]
+        [DataRow(-1)]
+        [DataRow(0)]
+        [DataRow(null)]
+        public void Get_BookById_CathExeptionIdIncorrect(int? id)
+        {
+            try
+            {
+                hm.GetBookById(id);
+                Assert.Fail("No exeption");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(e.Message, "Id is incorrect");
+            }
+        }
+
+
+        [TestMethod]
+        [DataRow(3)]
+        [DataRow(4)]
+        [DataRow(23)]
+        public void Get_BookById_ReturnsBookWithSameId(int? id)
+        {
+            try
+            {
+                Book book = hm.GetBookById(id);
+                Assert.AreEqual(book.Id, id);
+
+            }
+            catch (Exception e)
+            {
+                Assert.Fail("Exeption: "+ e);
+            }
+        }
     }
 }
