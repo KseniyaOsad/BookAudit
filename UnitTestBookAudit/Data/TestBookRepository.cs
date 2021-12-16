@@ -6,17 +6,26 @@ using System.Text;
 
 namespace UnitTestBookAudit.Data
 {
+    
     // Симуляция репозитория с книгами.
     class TestBookRepository : IBookRepository<Book>
     {
+        private Book _book = new Book()
+        {
+            Name = "C# .Net",
+            Description = "Description",
+            Reserve = false,
+            InArchive = false
+        };
+
         public void ChangeBookArchievation(int bookId, bool newArchievationValue)
         {
-            // Делаем вид, что тут происходит какое-то сохранение 
+            _book.InArchive = newArchievationValue;
         }
 
         public void ChangeBookReservation(int bookId, bool newReservationValue)
         {
-            // Делаем вид, что тут происходит какое-то сохранение 
+            _book.Reserve = newReservationValue;
         }
 
         public void CreateBook(Book book)
@@ -104,12 +113,8 @@ namespace UnitTestBookAudit.Data
             {
                 return null;
             }
-            return new Book()
-            {
-                Id = bookId,
-                Name = "C# .Net",
-                Description = "Some description"
-            };
+            _book.Id = bookId;
+            return _book;
         }
 
         public bool IsBookIdExists(int bookId)

@@ -1,5 +1,7 @@
 using BookAudit.Controllers;
+using BookAudit.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Linq;
 using UnitTestBookAudit.Data;
 
@@ -121,5 +123,60 @@ namespace UnitTestBookAudit
             var res = hm.FilterBooks(id, name, reserve, archieve);
             Assert.AreEqual(4, res.Count);
         }
+
+        [TestMethod]
+        [DataRow(1, true)]
+        [DataRow(2, false)]
+        public void Change_BookReservation_ReturnsThisBookWithNewValue(int? id, bool reserve)
+        {
+            hm.ChangeBookReservation(id, reserve);
+            Book book = hm.GetBookById(id);
+            Assert.IsFalse(book.Reserve== reserve);
+        }
+
+        [TestMethod]
+        [DataRow(1, true)]
+        [DataRow(2, false)]
+        public void Change_BookArchivation_ReturnsThisBookWithNewValue(int? id, bool arch)
+        {
+            hm.ChangeBookArchievation(id, arch);
+            Book book = hm.GetBookById(id);
+            Assert.IsFalse(book.InArchive == arch);
+        }
+
+        [TestMethod]
+        [DataRow(-1, true)]
+        [DataRow(null, false)]
+        [DataRow(0, false)]
+        public void Change_BookArchivation_CathExeption(int? id, bool arch)
+        {
+            try
+            {
+                hm.ChangeBookArchievation(id, arch);
+                Assert.Fail("No exeption");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(e.Message, "Id is incorrect or book doesn't exist");
+            }
+        }
+
+        [TestMethod]
+        [DataRow(-1, true)]
+        [DataRow(null, false)]
+        [DataRow(0, false)]
+        public void Change_BookReservation_CathExeption(int? id, bool reserve)
+        {
+            try
+            {
+                hm.ChangeBookReservation(id, reserve);
+                Assert.Fail("No exeption");
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(e.Message, "Id is incorrect or book doesn't exist");
+            }
+        }
+
     }
 }

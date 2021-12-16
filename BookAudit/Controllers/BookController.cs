@@ -118,7 +118,7 @@ namespace BookAudit.Controllers
         }
         public void ChangeBookArchievation(int? bookId, bool isArchieved)
         {
-            if (bookId == null || !_bookRepository.IsBookIdExists((int)bookId))
+            if (bookId == null || bookId < 1 || !_bookRepository.IsBookIdExists((int)bookId))
             {
                 throw new Exception("Id is incorrect or book doesn't exist");
             }
@@ -126,7 +126,7 @@ namespace BookAudit.Controllers
         }
         public void ChangeBookReservation(int? bookId, bool isReserved )
         {
-            if (bookId == null || !_bookRepository.IsBookIdExists((int)bookId))
+            if (bookId == null || bookId < 1 || !_bookRepository.IsBookIdExists((int)bookId))
             {
                 throw new Exception("Id is incorrect or book doesn't exist");
             }
