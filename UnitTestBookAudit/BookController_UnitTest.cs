@@ -16,46 +16,107 @@ namespace UnitTestBookAudit
         }
 
         [TestMethod]
-        public void Get_AllAuthors_ReturnsTwoAuthor_Test()
+        public void Get_AllAuthors_ReturnsTwoAuthor()
         {
             var res = hm.GetAllAuthors();
             Assert.AreEqual(2, res.Count);
         }
 
         [TestMethod]
-        [DataRow("First")]
-        [DataRow("Second")]
-        public void Filter_BooksByName_ReturnsBooksContainingTheSameName_Test(string name)
+        [DataRow(null, "C#",  null, null)]
+        [DataRow(null, "MVC", null, null)]
+        public void Filter_BooksByName_ReturnsBooksContainingTheSameValue(int? authorId, string name, int? inReserve, int? inArchieve)
         {
-            var res = hm.FilterBooks(null, name, null, null);
-            bool actual = res[0].Name.Contains(name) ? true : false;
-            Assert.AreEqual(true, actual);
+            var books = hm.FilterBooks(authorId, name, inReserve, inArchieve);
+            bool actual = books.All(b => b.Name.Contains(name.Trim()));
+            Assert.IsTrue(actual);
         }
 
         [TestMethod]
-        [DataRow(1)]
-        [DataRow(15)]
-        public void Filter_BooksByAuthorId_ReturnsBooksContainingTheSameAuthorId_Test(int id)
+        [DataRow(1, " ", null, null)]
+        [DataRow(3, "MVC", null, null)]
+        public void Filter_BooksByAuthorId_ReturnsBooksContainingTheSameValue(int? authorId, string name, int? inReserve, int? InArchive)
         {
-            var res = hm.FilterBooks(id, null, null, null);
-            int actual = res.First().AuthorId;
-            Assert.AreEqual(id, actual);
+            var books = hm.FilterBooks(authorId, name, inReserve, InArchive);
+            bool actual = books.All(b => b.AuthorId== authorId);
+            Assert.IsTrue(actual);
         }
 
         [TestMethod]
-        [DataRow(1, "First")]
-        [DataRow(15, "Second")]
-        public void Filter_BooksByAuthorIdAndName_ReturnsTwoBooks_Test(int id, string name)
+        [DataRow(1, " ", null, null)]
+        [DataRow(3, "MVC", null, null)]
+        public void Filter_BooksByAuthorIdAndName_ReturnsBooksContainingTheSameValue(int? authorId, string name, int? inReserve, int? InArchive)
         {
-            var res = hm.FilterBooks(id, name, null, null);
-            Assert.AreEqual(2, res.Count);
+            var books = hm.FilterBooks(authorId, name, inReserve, InArchive);
+            bool actual = books.All(b => b.AuthorId == authorId && b.Name.Contains(name.Trim()));
+            Assert.IsTrue(actual);
         }
 
         [TestMethod]
-        [DataRow(-1, "", null, null)]
+        [DataRow(1, " ",      1, null)]
+        [DataRow(3, "MVC",    0, null)]
+        [DataRow(null, "MVC", 0, null)]
+        [DataRow(null, "MVC", 1, null)]
+        public void Filter_BooksByReservation_ReturnsBooksContainingTheSameValue(int? authorId, string name, int? inReserve, int? InArchive)
+        {
+            var books = hm.FilterBooks(authorId, name, inReserve, InArchive);
+            bool isReserve = (inReserve == 1) ? true : false;
+            bool actual = books.All(b => b.Reserve == isReserve);
+            Assert.IsTrue(actual);
+        }
+
+        [TestMethod]
+        [DataRow(1, " ",      null, 1)]
+        [DataRow(3, "MVC",    null, 0)]
+        [DataRow(null, "MVC", null, 0)]
+        [DataRow(null, "MVC", null, 1)]
+        public void Filter_BooksByArchivation_ReturnsBooksContainingTheSameValue(int? authorId, string name, int? inReserve, int? InArchive)
+        {
+            var books = hm.FilterBooks(authorId, name, inReserve, InArchive);
+            bool isArchieve = (InArchive == 1) ? true : false;
+            bool actual = books.All(b => b.InArchive == isArchieve);
+            Assert.IsTrue(actual);
+        }
+
+        [TestMethod]
+        [DataRow(null, " ",   1, 1)]
+        [DataRow(null, null,  0, 1)]
+        [DataRow(null, "",    1, 0)]
+        [DataRow(null, "",    0, 0)]
+        public void Filter_BooksByArchivationAndReservation_ReturnsBooksContainingTheSameValue(int? authorId, string name, int? inReserve, int? InArchive)
+        {
+            var books = hm.FilterBooks(authorId, name, inReserve, InArchive);
+            bool isReserve = (inReserve == 1) ? true : false;
+            bool isArchieve = (InArchive == 1) ? true : false;
+            bool actual = books.All(b => b.InArchive == isArchieve && b.Reserve == isReserve);
+            Assert.IsTrue(actual);
+        }
+        
+        [TestMethod]
+        [DataRow(1, " MVC",   1, 1)]
+        [DataRow(3, "c#",  0, 1)]
+        [DataRow(2, "Angular",    1, 0)]
+        [DataRow(5, "Patterns",    0, 0)]
+        public void Filter_BooksByAllFilters_ReturnsBooksContainingTheSameValue(int? authorId, string name, int? inReserve, int? InArchive)
+        {
+            var books = hm.FilterBooks(authorId, name, inReserve, InArchive);
+            bool isReserve = (inReserve == 1) ? true : false;
+            bool isArchieve = (InArchive == 1) ? true : false;
+            bool actual = books.All(b => 
+                b.InArchive == isArchieve 
+                && b.Reserve == isReserve
+                && b.AuthorId == authorId 
+                && b.Name.Contains(name.Trim()));
+            Assert.IsTrue(actual);
+        }
+
+
+        [TestMethod]
+        [DataRow(-1, "", null, 45)]
         [DataRow(0, "    ", -1, null)]
         [DataRow(null, null, null, -1)]
-        public void Filter_Books_DataIsIncorrect_ReturnsFourBook_Test(int? id, string name, int? reserve, int? archieve)
+        [DataRow(null, null, 67, -1)]
+        public void Filter_Books_DataIsIncorrect_ReturnsFourBook(int? id, string name, int? reserve, int? archieve)
         {
             var res = hm.FilterBooks(id, name, reserve, archieve);
             Assert.AreEqual(4, res.Count);
